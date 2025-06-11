@@ -4,3 +4,13 @@ soultion arch caled layer architecture
 
 *Core
 create folder Entities->DB classes
+
+to add migration-> open package manager console
+default project : infrastructre
+add-migration 'inital' -o "Data/Migrations"
+
+then update-database
+// to add migration
+in API install 
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.6" />
+
