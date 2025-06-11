@@ -12,6 +12,7 @@ namespace Ecommerce.Core.Interfaces
         Task AddAsync(TEntity entity);
         Task UpdateAsync(TEntity entity); 
         Task DeleteAsync(int id);
+        Task SaveChangesAsync();
      }
     
 }
