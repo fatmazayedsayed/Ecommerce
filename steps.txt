@@ -1,0 +1,6 @@
+create class library Ecommerce.Core and Ecommerce.Infrastructure
+create web API Ecommerce.API
+soultion arch caled layer architecture
+
+*Core
+create folder Entities->DB classes
