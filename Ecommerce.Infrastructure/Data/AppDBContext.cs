@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Ecommerce.Core.Entities.Product;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 
 namespace Ecommerce.Infrastructure.Data
@@ -17,6 +18,11 @@ namespace Ecommerce.Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.ConfigureWarnings(warnings =>
+                warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
         }
     }
 }

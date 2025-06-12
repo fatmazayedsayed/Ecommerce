@@ -25,6 +25,10 @@ namespace Ecommerce.Infrastructure.Repositories
             Photos = new PhotoRepository(_context);
 
         }
-        
+
+        public Task SaveChangesAsync()
+        {
+           return _context.SaveChangesAsync();
+        }
     }
 }

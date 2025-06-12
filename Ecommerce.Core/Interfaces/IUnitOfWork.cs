@@ -11,6 +11,7 @@ namespace Ecommerce.Core.Interfaces
         IProductRepository Products { get; }
         ICategoryRepository Categories { get; }
         IPhotoRepository Photos { get; }
-         
+
+        Task SaveChangesAsync();
     }
 }
