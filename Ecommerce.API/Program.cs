@@ -11,7 +11,7 @@ builder.Services.AddSwaggerGen();
 
 // Ensure the InfrastructureRegistration extension method is properly referenced
 builder.Services.Register(builder.Configuration); // Replace with the correct method name if needed
-
+builder.Services.AddAutoMapper( AppDomain.CurrentDomain.GetAssemblies()); // Ensure AutoMapper is configured
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
