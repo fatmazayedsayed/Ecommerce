@@ -1,4 +1,5 @@
-﻿using Ecommerce.Core.Interfaces;
+﻿using AutoMapper;
+using Ecommerce.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,11 +9,13 @@ namespace Ecommerce.API.Controllers
     [ApiController]
     public class BaseController : ControllerBase
     {
-        private readonly IUnitOfWork _work;
+        protected readonly IUnitOfWork _work;
+        protected readonly IMapper _mapper;
 
-        public BaseController(IUnitOfWork work)
+        public BaseController(IUnitOfWork work,IMapper mapper )
         {
             _work = work;
+            _mapper = mapper;
         }
     }
 }
