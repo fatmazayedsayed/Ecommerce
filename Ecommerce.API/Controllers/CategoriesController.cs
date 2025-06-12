@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using Ecommerce.API.Helper;
 using Ecommerce.Core.DTO.Categories;
 using Ecommerce.Core.Entities.Product;
 using Ecommerce.Core.Interfaces;
 using Humanizer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace Ecommerce.API.Controllers
 {
@@ -21,9 +23,9 @@ namespace Ecommerce.API.Controllers
             var categories = await _work.Categories.GetAllAsync();
             if (categories == null || !categories.Any())
             {
-                return NotFound("No categories found.");
+                return NotFound(new ResponseClass ((int)HttpStatusCode.NotFound));
             }
-            return Ok(categories);
+            return Ok(new ResponseClass((int)HttpStatusCode.Found, data: categories));
         }
 
         [HttpGet("{id}")]
@@ -32,7 +34,8 @@ namespace Ecommerce.API.Controllers
             var category = await _work.Categories.GetByIdAsync(id);
             if (category == null)
             {
-                return NotFound($"Category with ID {id} not found.");
+                 return NotFound(new ResponseClass((int)HttpStatusCode.NotFound, $"Category with ID {id} not found."));
+
             }
             return Ok(category);
         }
@@ -41,30 +44,32 @@ namespace Ecommerce.API.Controllers
         {
             if (dto == null)
             {
-                return BadRequest("Category data is null.");
+                 return NotFound(new ResponseClass((int)HttpStatusCode.BadRequest,"Category data is null."));
+
             }
             var category = _mapper.Map<Category>(dto);
             await _work.Categories.AddAsync(category);
             await _work.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetCategoryById), new { id = category.Id }, category);
+            // return CreatedAtAction(nameof(GetCategoryById), new { id = category.Id }, category);
+            return Ok(new ResponseClass((int)HttpStatusCode.Created, $"Category with ID {category.Id} is created."));
         }
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateCategory(CategoryUpdateDTO category)
         {
             if (category == null || category.Id < 1)
             {
-                return BadRequest("Category data is invalid.");
+                return NotFound(new ResponseClass((int)HttpStatusCode.BadRequest, "Category data is invalid."));
             }
             var existingCategory = await _work.Categories.GetByIdAsync(category.Id);
             if (existingCategory == null)
             {
-                return NotFound($"Category with ID {category.Id} not found.");
+                return NotFound(new ResponseClass((int)HttpStatusCode.NotFound, $"Category with ID {category.Id} not found."));
             }
             var dto = _mapper.Map<Category>(category);
 
             await _work.Categories.UpdateAsync(dto);
             await _work.SaveChangesAsync();
-            return NoContent();
+            return Ok(new ResponseClass((int)HttpStatusCode.NoContent, $"Category with ID {category.Id} was updated."));
         }
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
@@ -72,14 +77,14 @@ namespace Ecommerce.API.Controllers
             var category = await _work.Categories.GetByIdAsync(id);
             if (category == null)
             {
-                return NotFound($"Category with ID {id} not found.");
+                return NotFound(new ResponseClass((int)HttpStatusCode.NotFound, $"Category with ID {id} not found."));
             }
             var dto = _mapper.Map<Category>(category);
             dto.IsDeleted = true;
             dto.DeletedAt = DateTime.Now;
             await _work.Categories.UpdateAsync(dto);
             await _work.SaveChangesAsync();
-            return NoContent();
+            return Ok(new ResponseClass((int)HttpStatusCode.NoContent, $"Category with ID {category.Id} was deleted."));
         }
     }
 }
