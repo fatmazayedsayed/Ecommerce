@@ -50,8 +50,7 @@ namespace Ecommerce.API.Controllers
             var category = _mapper.Map<Category>(dto);
             await _work.Categories.AddAsync(category);
             await _work.SaveChangesAsync();
-            // return CreatedAtAction(nameof(GetCategoryById), new { id = category.Id }, category);
-            return Ok(new ResponseClass((int)HttpStatusCode.Created, $"Category with ID {category.Id} is created."));
+             return Ok(new ResponseClass((int)HttpStatusCode.Created, $"Category with ID {category.Id} is created."));
         }
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateCategory(CategoryUpdateDTO category)
