@@ -32,13 +32,22 @@ namespace Ecommerce.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductById(int id)
         {
-            var Product = await _work.Products.GetByIdAsync(id);
-            if (Product == null)
+            try
             {
-                return NotFound(new ResponseClass((int)HttpStatusCode.NotFound, $"Product with ID {id} not found."));
+                var product = await _work.Products.GetByIdAsync(id, x => x.Category, x => x.Photos);
+                var result = mapper.Map<ProductDTO>(product);
+                if (product != null)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(new ResponseClass(400, "This Product Not Found"));
 
             }
-            return Ok(Product);
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
         }
         [HttpPost("create")]
         public async Task<IActionResult> CreateProduct(ProductDTO dto)
