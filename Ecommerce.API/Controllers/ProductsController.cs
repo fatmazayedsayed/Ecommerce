@@ -20,7 +20,7 @@ namespace Ecommerce.API.Controllers
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAllProducts()
         {
-            var Products = await _work.Products.GetAllAsync(x=>x.Category, x=>x.Photos);
+            var Products = await _work.ProductRepositiry.GetAllAsync(x=>x.Category, x=>x.Photos);
             if (Products == null || !Products.Any())
             {
                 return NotFound(new ResponseClass((int)HttpStatusCode.NotFound));
@@ -34,7 +34,7 @@ namespace Ecommerce.API.Controllers
         {
             try
             {
-                var product = await _work.Products.GetByIdAsync(id, x => x.Category, x => x.Photos);
+                var product = await _work.ProductRepositiry.GetByIdAsync(id, x => x.Category, x => x.Photos);
                 var result = mapper.Map<ProductDTO>(product);
                 if (product != null)
                 {
@@ -50,17 +50,21 @@ namespace Ecommerce.API.Controllers
             }
         }
         [HttpPost("create")]
-        public async Task<IActionResult> CreateProduct(ProductDTO dto)
+        public async Task<IActionResult> CreateProduct(AddProductDTO productDTO)
         {
-            if (dto == null)
+            try
             {
-                return NotFound(new ResponseClass((int)HttpStatusCode.BadRequest, "Product data is null."));
+                await _work.ProductRepositiry.AddAsync(productDTO);
 
             }
-            var product = mapper.Map<Product>(dto);
-            await _work.Products.AddAsync(product);
-            await _work.SaveChangesAsync(); 
-            return Ok(new ResponseClass((int)HttpStatusCode.Created, $"Product with ID {product.Id} is created."));
+            catch (Exception ex)
+            {
+                // This will show the real database error
+                var errorMessage = ex.InnerException?.InnerException?.Message ?? ex.InnerException?.Message ?? ex.Message;
+                return BadRequest(errorMessage);
+            }
+            return Ok(new ResponseClass(200, "Product Added Successfully"));
+
         }
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateProduct(UpdateProductDTO Product)
@@ -69,21 +73,20 @@ namespace Ecommerce.API.Controllers
             {
                 return NotFound(new ResponseClass((int)HttpStatusCode.BadRequest, "Product data is invalid."));
             }
-            var existingProduct = await _work.Products.GetByIdAsync(Product.Id);
+            var existingProduct = await _work.ProductRepositiry.GetByIdAsync(Product.Id);
             if (existingProduct == null)
             {
                 return NotFound(new ResponseClass((int)HttpStatusCode.NotFound, $"Product with ID {Product.Id} not found."));
             }
             var dto = mapper.Map<Product>(Product);
 
-            await _work.Products.UpdateAsync(dto);
-            await _work.SaveChangesAsync();
-            return Ok(new ResponseClass((int)HttpStatusCode.NoContent, $"Product with ID {Product.Id} was updated."));
+            await _work.ProductRepositiry.UpdateAsync(dto);
+             return Ok(new ResponseClass((int)HttpStatusCode.NoContent, $"Product with ID {Product.Id} was updated."));
         }
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
-            var Product = await _work.Products.GetByIdAsync(id);
+            var Product = await _work.ProductRepositiry.GetByIdAsync(id);
             if (Product == null)
             {
                 return NotFound(new ResponseClass((int)HttpStatusCode.NotFound, $"Product with ID {id} not found."));
@@ -91,9 +94,8 @@ namespace Ecommerce.API.Controllers
             var dto = mapper.Map<Product>(Product);
             dto.IsDeleted = true;
             dto.DeletedAt = DateTime.Now;
-            await _work.Products.UpdateAsync(dto);
-            await _work.SaveChangesAsync();
-            return Ok(new ResponseClass((int)HttpStatusCode.NoContent, $"Product with ID {Product.Id} was deleted."));
+            await _work.ProductRepositiry.UpdateAsync(dto);
+             return Ok(new ResponseClass((int)HttpStatusCode.NoContent, $"Product with ID {Product.Id} was deleted."));
         }
     }
 }

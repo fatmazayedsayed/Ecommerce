@@ -8,10 +8,8 @@ namespace Ecommerce.Core.Interfaces
 {
     public interface IUnitOfWork
     {
-        IProductRepository Products { get; }
-        ICategoryRepository Categories { get; }
-        IPhotoRepository Photos { get; }
-
-        Task SaveChangesAsync();
+        public ICategoryRepository CategoryRepositiry { get; }
+        public IPhotoRepository PhotoRepositiry { get; }
+        public IProductRepositiry ProductRepositiry { get; }
     }
 }
