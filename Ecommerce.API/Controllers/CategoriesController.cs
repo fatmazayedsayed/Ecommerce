@@ -47,7 +47,7 @@ namespace Ecommerce.API.Controllers
                  return NotFound(new ResponseClass((int)HttpStatusCode.BadRequest,"Category data is null."));
 
             }
-            var category = _mapper.Map<Category>(dto);
+            var category = mapper.Map<Category>(dto);
             await _work.Categories.AddAsync(category);
             await _work.SaveChangesAsync();
              return Ok(new ResponseClass((int)HttpStatusCode.Created, $"Category with ID {category.Id} is created."));
@@ -64,7 +64,7 @@ namespace Ecommerce.API.Controllers
             {
                 return NotFound(new ResponseClass((int)HttpStatusCode.NotFound, $"Category with ID {category.Id} not found."));
             }
-            var dto = _mapper.Map<Category>(category);
+            var dto = mapper.Map<Category>(category);
 
             await _work.Categories.UpdateAsync(dto);
             await _work.SaveChangesAsync();
@@ -78,7 +78,7 @@ namespace Ecommerce.API.Controllers
             {
                 return NotFound(new ResponseClass((int)HttpStatusCode.NotFound, $"Category with ID {id} not found."));
             }
-            var dto = _mapper.Map<Category>(category);
+            var dto = mapper.Map<Category>(category);
             dto.IsDeleted = true;
             dto.DeletedAt = DateTime.Now;
             await _work.Categories.UpdateAsync(dto);

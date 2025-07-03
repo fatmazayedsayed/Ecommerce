@@ -9,13 +9,13 @@ namespace Ecommerce.API.Controllers
     [ApiController]
     public class BaseController : ControllerBase
     {
-        protected readonly IUnitOfWork _work;
-        protected readonly IMapper _mapper;
+        public readonly IUnitOfWork _work;
+        protected readonly IMapper mapper;
 
-        public BaseController(IUnitOfWork work,IMapper mapper )
+        public BaseController(IUnitOfWork work,IMapper _mapper )
         {
             _work = work;
-            _mapper = mapper;
+            mapper = _mapper;
         }
     }
 }

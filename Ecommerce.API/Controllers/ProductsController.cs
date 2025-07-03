@@ -1,8 +1,10 @@
-﻿using AutoMapper;
+﻿
+
+using AutoMapper;
 using Ecommerce.API.Helper;
 using Ecommerce.Core.DTO.Products;
 using Ecommerce.Core.Entities.Product;
-using Ecommerce.Core.Interfaces; 
+using Ecommerce.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -23,7 +25,8 @@ namespace Ecommerce.API.Controllers
             {
                 return NotFound(new ResponseClass((int)HttpStatusCode.NotFound));
             }
-            return Ok(new ResponseClass((int)HttpStatusCode.Found, data: Products));
+            var res= mapper.Map<List<ProductDTO>>(Products);
+            return Ok(new ResponseClass((int)HttpStatusCode.Found, data: res));
         }
 
         [HttpGet("{id}")]
@@ -45,13 +48,13 @@ namespace Ecommerce.API.Controllers
                 return NotFound(new ResponseClass((int)HttpStatusCode.BadRequest, "Product data is null."));
 
             }
-            var Product = _mapper.Map<Product>(dto);
-            await _work.Products.AddAsync(Product);
+            var product = mapper.Map<Product>(dto);
+            await _work.Products.AddAsync(product);
             await _work.SaveChangesAsync(); 
-            return Ok(new ResponseClass((int)HttpStatusCode.Created, $"Product with ID {Product.Id} is created."));
+            return Ok(new ResponseClass((int)HttpStatusCode.Created, $"Product with ID {product.Id} is created."));
         }
         [HttpPut("update/{id}")]
-        public async Task<IActionResult> UpdateProduct(ProductUpdateDTO Product)
+        public async Task<IActionResult> UpdateProduct(UpdateProductDTO Product)
         {
             if (Product == null || Product.Id < 1)
             {
@@ -62,7 +65,7 @@ namespace Ecommerce.API.Controllers
             {
                 return NotFound(new ResponseClass((int)HttpStatusCode.NotFound, $"Product with ID {Product.Id} not found."));
             }
-            var dto = _mapper.Map<Product>(Product);
+            var dto = mapper.Map<Product>(Product);
 
             await _work.Products.UpdateAsync(dto);
             await _work.SaveChangesAsync();
@@ -76,7 +79,7 @@ namespace Ecommerce.API.Controllers
             {
                 return NotFound(new ResponseClass((int)HttpStatusCode.NotFound, $"Product with ID {id} not found."));
             }
-            var dto = _mapper.Map<Product>(Product);
+            var dto = mapper.Map<Product>(Product);
             dto.IsDeleted = true;
             dto.DeletedAt = DateTime.Now;
             await _work.Products.UpdateAsync(dto);
