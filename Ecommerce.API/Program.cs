@@ -30,6 +30,7 @@ if (!Directory.Exists(wwwrootPath))
 {
     Directory.CreateDirectory(wwwrootPath);
 }
+app.UseStatusCodePagesWithReExecute("/errors/{0}");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles(); // Enable static files serving
