@@ -20,7 +20,7 @@ namespace Ecommerce.API.Controllers
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAllProducts()
         {
-            var Products = await _work.ProductRepositiry.GetAllAsync(x=>x.Category, x=>x.Photos);
+            var Products = await _work.ProductRepository.GetAllAsync(x=>x.Category, x=>x.Photos);
             if (Products == null || !Products.Any())
             {
                 return NotFound(new ResponseClass((int)HttpStatusCode.NotFound));
@@ -34,7 +34,7 @@ namespace Ecommerce.API.Controllers
         {
             try
             {
-                var product = await _work.ProductRepositiry.GetByIdAsync(id, x => x.Category, x => x.Photos);
+                var product = await _work.ProductRepository.GetByIdAsync(id, x => x.Category, x => x.Photos);
                 var result = mapper.Map<ProductDTO>(product);
                 if (product != null)
                 {
@@ -54,7 +54,7 @@ namespace Ecommerce.API.Controllers
         {
             try
             {
-                await _work.ProductRepositiry.AddAsync(productDTO);
+                await _work.ProductRepository.AddAsync(productDTO);
 
             }
             catch (Exception ex)
@@ -66,36 +66,33 @@ namespace Ecommerce.API.Controllers
             return Ok(new ResponseClass(200, "Product Added Successfully"));
 
         }
-        [HttpPut("update/{id}")]
-        public async Task<IActionResult> UpdateProduct(UpdateProductDTO Product)
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateProduct(UpdateProductDTO productDto)
         {
-            if (Product == null || Product.Id < 1)
+            try
             {
-                return NotFound(new ResponseClass((int)HttpStatusCode.BadRequest, "Product data is invalid."));
+                await _work.ProductRepository.UpdateAsync(productDto);
+                return Ok(new ResponseClass(200, "Product Updated Successfully"));
             }
-            var existingProduct = await _work.ProductRepositiry.GetByIdAsync(Product.Id);
-            if (existingProduct == null)
+            catch (Exception ex)
             {
-                return NotFound(new ResponseClass((int)HttpStatusCode.NotFound, $"Product with ID {Product.Id} not found."));
+                return BadRequest(new ResponseClass(400, ex.Message));
             }
-            var dto = mapper.Map<Product>(Product);
-
-            await _work.ProductRepositiry.UpdateAsync(dto);
-             return Ok(new ResponseClass((int)HttpStatusCode.NoContent, $"Product with ID {Product.Id} was updated."));
         }
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
-            var Product = await _work.ProductRepositiry.GetByIdAsync(id);
-            if (Product == null)
+            try
             {
-                return NotFound(new ResponseClass((int)HttpStatusCode.NotFound, $"Product with ID {id} not found."));
+                var product = await _work.ProductRepository.GetByIdAsync(id, x => x.Photos, x => x.Category);
+                await _work.ProductRepository.DeleteAsync(product);
+                return Ok(new ResponseClass(200, "Product Deleted Successfully"));
+
             }
-            var dto = mapper.Map<Product>(Product);
-            dto.IsDeleted = true;
-            dto.DeletedAt = DateTime.Now;
-            await _work.ProductRepositiry.UpdateAsync(dto);
-             return Ok(new ResponseClass((int)HttpStatusCode.NoContent, $"Product with ID {Product.Id} was deleted."));
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseClass(400, ex.Message));
+            }
         }
     }
 }

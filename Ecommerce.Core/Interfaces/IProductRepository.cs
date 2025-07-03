@@ -4,7 +4,7 @@ using Ecommerce.Core.Entities.Product;
 
 namespace Ecommerce.Core.Interfaces
 {
-    public interface IProductRepositiry : IGenericRepository<Product>
+    public interface IProductRepository : IGenericRepository<Product>
     {
         Task<bool> AddAsync(AddProductDTO productDto);
         Task<bool> UpdateAsync(UpdateProductDTO updateProductDTO);

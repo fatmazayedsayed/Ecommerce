@@ -8,7 +8,7 @@ using Ecommerce.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 namespace Ecommerce.Infrastructure.Repositories
 {
-    public class ProductRepositiry : GenericRepository<Product>, IProductRepositiry
+    public class ProductRepositiry : GenericRepository<Product>, IProductRepository
     {
         private readonly AppDBContext context;
         private readonly IMapper mapper;
@@ -74,6 +74,7 @@ namespace Ecommerce.Infrastructure.Repositories
 
             var product = mapper.Map<Product>(productDto);
             await context.Products.AddAsync(product);
+            await context.SaveChangesAsync(); // Save first to generate Product.Id
 
             var ImagePaths = await imageManagementService.AddImageAsync(productDto.Photo, productDto.Name);
             //manully map photo

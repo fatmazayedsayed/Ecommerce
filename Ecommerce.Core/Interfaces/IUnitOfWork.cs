@@ -2,8 +2,8 @@
 {
     public interface IUnitOfWork
     {
-        public ICategoryRepository CategoryRepositiry { get; }
-        public IPhotoRepository PhotoRepositiry { get; }
-        public IProductRepositiry ProductRepositiry { get; }
+        public ICategoryRepository CategoryRepository { get; }
+        public IPhotoRepository PhotoRepository { get; }
+        public IProductRepository ProductRepository { get; }
     }
 }
