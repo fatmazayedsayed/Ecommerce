@@ -1,25 +1,56 @@
-﻿using Ecommerce.Core.Interfaces;
+﻿// Ecommerce.Infrastructure/Config/InfrastructureRegistration.cs
+using Ecommerce.Core.Interfaces;
+using Ecommerce.Core.Services;
 using Ecommerce.Infrastructure.Data;
+using Ecommerce.Infrastructure.Repositories.Service;
 using Ecommerce.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection; 
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
+using Microsoft.Extensions.Logging;
 
 namespace Ecommerce.Infrastructure
 {
-    public static class InfrastructureRegisteration
+    public static class InfrastructureRegistration
     {
-        public static IServiceCollection Register(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddInfrastructureServices(
+            this IServiceCollection services,
+            IConfiguration configuration)
         {
-            services.AddScoped(typeof( IGenericRepository<>), typeof(GenericRepository<>));
-            //services.AddScoped< IProductRepository, ProductRepository>();
-            //services.AddScoped< ICategoryRepository, CategoryRepository>();
-            //services.AddScoped<IPhotoRepository, PhotoRepository>();    
+            // Register DbContext with validation
+            var connectionString = configuration.GetConnectionString("EcommerceDb");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new InvalidOperationException(
+                    "Database connection string 'EcommerceDb' not found in configuration.");
+            }
+
+            services.AddDbContext<AppDBContext>(options =>
+            {
+                options.UseSqlServer(connectionString);
+#if DEBUG
+                options.EnableSensitiveDataLogging();
+                options.LogTo(Console.WriteLine, LogLevel.Information);
+#endif
+            });
+
+            // Register other services
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddSingleton<IImageManagementService, ImageManagementService>();
+
+            // Configure wwwroot file provider
+            var wwwrootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            if (!Directory.Exists(wwwrootPath))
+            {
+                Directory.CreateDirectory(wwwrootPath);
+            }
+            services.AddSingleton<IFileProvider>(
+                new PhysicalFileProvider(wwwrootPath));
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            //apply db context
-            services.AddDbContext<AppDBContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("EcommerceDb")));
+
             return services;
         }
     }

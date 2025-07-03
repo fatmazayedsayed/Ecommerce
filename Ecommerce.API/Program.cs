@@ -1,30 +1,40 @@
 using Ecommerce.Infrastructure;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// Add services to the container
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Ensure the InfrastructureRegistration extension method is properly referenced
-builder.Services.Register(builder.Configuration); // Replace with the correct method name if needed
-builder.Services.AddAutoMapper( AppDomain.CurrentDomain.GetAssemblies()); // Ensure AutoMapper is configured
+// Configure Infrastructure Services
+builder.Services.AddInfrastructureServices(builder.Configuration);
+
+// Configure AutoMapper to scan all assemblies
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly(),
+     typeof(Ecommerce.Infrastructure.Data.AppDBContext).Assembly);
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// Ensure wwwroot exists
+var wwwrootPath = Path.Combine(app.Environment.ContentRootPath, "wwwroot");
+if (!Directory.Exists(wwwrootPath))
+{
+    Directory.CreateDirectory(wwwrootPath);
+}
+
 app.UseHttpsRedirection();
+app.UseStaticFiles(); // Enable static files serving
 
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
