@@ -17,6 +17,7 @@ namespace Ecommerce.Infrastructure.Repositories.Service
         {
             this.fileProvider = fileProvider;
         }
+        //src is Product name
 
         public async Task<List<string>> AddImageAsync(IFormFileCollection files, string src)
         {
