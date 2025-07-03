@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Ecommerce.Core.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ecommerce.API.Controllers

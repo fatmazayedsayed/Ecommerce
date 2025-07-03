@@ -76,6 +76,7 @@ namespace Ecommerce.Infrastructure.Repositories
             await context.Products.AddAsync(product);
 
             var ImagePaths = await imageManagementService.AddImageAsync(productDto.Photo, productDto.Name);
+            //manully map photo
             var photos = ImagePaths.Select(path => new Photo
             {
                 PhotoName = path,

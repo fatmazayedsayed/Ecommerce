@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Ecommerce.Core.DTO.Categories;
 using Ecommerce.Core.DTO.Photos;
 using Ecommerce.Core.DTO.Products;
 using Ecommerce.Core.Entities.Product;
@@ -17,7 +16,7 @@ namespace Ecommerce.API.Mapping
 
             CreateMap<Photo, PhotoDTO>().ReverseMap();
 
-            CreateMap<AddProductDTO, Product>().ForMember(x => x.Photos, op => op.Ignore()).ReverseMap();
+            CreateMap<AddProductDTO, Product>().ForMember(x => x.Photos, op => op.Ignore()).ReverseMap();//don't map Photos property because it will be handled separately in the service layer
             CreateMap<UpdateProductDTO, Product>().ForMember(x => x.Photos, op => op.Ignore()).ReverseMap();
 
         }

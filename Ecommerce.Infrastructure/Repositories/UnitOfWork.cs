@@ -1,34 +1,28 @@
-﻿using Ecommerce.Core.Interfaces;
+﻿using AutoMapper;
+using Ecommerce.Core.Interfaces;
+using Ecommerce.Core.Services;
 using Ecommerce.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ecommerce.Infrastructure.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {
         private readonly AppDBContext _context;
-        public IProductRepository Products { get; }
-
-        public ICategoryRepository Categories { get; }
-
-        public IPhotoRepository Photos { get; }
-
-        public UnitOfWork(AppDBContext context)
+        private readonly IMapper mapper;
+        private readonly IImageManagementService imageManagementService;
+        public UnitOfWork(AppDBContext context, IMapper mapper, IImageManagementService imageManagementService)
         {
             _context = context;
-            Products = new ProductRepository(_context);
-            Categories = new CategoryRepository(_context);
-            Photos = new PhotoRepository(_context);
-
+            CategoryRepositiry = new CategoryRepositiry(context);
+            ProductRepositiry = new ProductRepositiry(_context, mapper, imageManagementService);
+            PhotoRepositiry = new PhotoRepository(context);
+            this.mapper = mapper;
+            this.imageManagementService = imageManagementService;
         }
 
-        public Task SaveChangesAsync()
-        {
-           return _context.SaveChangesAsync();
-        }
-    }
+        public ICategoryRepository CategoryRepositiry { get; }
+        public IPhotoRepository PhotoRepositiry { get; }
+        public IProductRepositiry ProductRepositiry { get; }
+
+     }
 }
