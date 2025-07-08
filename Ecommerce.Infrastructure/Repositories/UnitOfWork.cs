@@ -13,16 +13,16 @@ namespace Ecommerce.Infrastructure.Repositories
         public UnitOfWork(AppDBContext context, IMapper mapper, IImageManagementService imageManagementService)
         {
             _context = context;
-            CategoryRepositiry = new CategoryRepositiry(context);
-            ProductRepositiry = new ProductRepositiry(_context, mapper, imageManagementService);
-            PhotoRepositiry = new PhotoRepository(context);
+            CategoryRepository = new CategoryRepository(context);
+            ProductRepository = new ProductRepository(_context, mapper, imageManagementService);
+            PhotoRepository = new PhotoRepository(context);
             this.mapper = mapper;
             this.imageManagementService = imageManagementService;
         }
 
-        public ICategoryRepository CategoryRepositiry { get; }
-        public IPhotoRepository PhotoRepositiry { get; }
-        public IProductRepositiry ProductRepositiry { get; }
+        public ICategoryRepository CategoryRepository { get; }
+        public IPhotoRepository PhotoRepository { get; }
+        public IProductRepository ProductRepository { get; }
 
      }
 }

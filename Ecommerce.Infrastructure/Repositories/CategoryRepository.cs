@@ -3,9 +3,9 @@ using Ecommerce.Core.Interfaces;
 using Ecommerce.Infrastructure.Data;
 namespace Ecommerce.Infrastructure.Repositories
 {
-    public class CategoryRepositiry : GenericRepository<Category>, ICategoryRepository
+    public class CategoryRepository : GenericRepository<Category>, ICategoryRepository
     {
-        public CategoryRepositiry(AppDBContext context) : base(context)
+        public CategoryRepository(AppDBContext context) : base(context)
         {
         }
     }

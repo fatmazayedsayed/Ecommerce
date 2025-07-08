@@ -8,13 +8,13 @@ using Ecommerce.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 namespace Ecommerce.Infrastructure.Repositories
 {
-    public class ProductRepositiry : GenericRepository<Product>, IProductRepository
+    public class ProductRepository : GenericRepository<Product>, IProductRepository
     {
         private readonly AppDBContext context;
         private readonly IMapper mapper;
         private readonly IImageManagementService imageManagementService;
 
-        public ProductRepositiry(AppDBContext context, IMapper mapper, IImageManagementService imageManagementService) : base(context)
+        public ProductRepository(AppDBContext context, IMapper mapper, IImageManagementService imageManagementService) : base(context)
         {
             this.context = context;
             this.mapper = mapper;

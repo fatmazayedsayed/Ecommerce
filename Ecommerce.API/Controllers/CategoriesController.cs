@@ -18,7 +18,7 @@ namespace Ecommerce.API.Controllers
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAllCategories()
         {
-            var categories = await _work.CategoryRepositiry.GetAllAsync();
+            var categories = await _work.CategoryRepository.GetAllAsync();
             if (categories == null || !categories.Any())
             {
                 return NotFound(new ResponseClass ((int)HttpStatusCode.NotFound));
@@ -29,7 +29,7 @@ namespace Ecommerce.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCategoryById(int id)
         {
-            var category = await _work.CategoryRepositiry.GetByIdAsync(id);
+            var category = await _work.CategoryRepository.GetByIdAsync(id);
             if (category == null)
             {
                  return NotFound(new ResponseClass((int)HttpStatusCode.NotFound, $"Category with ID {id} not found."));
@@ -46,7 +46,7 @@ namespace Ecommerce.API.Controllers
 
             }
             var category = mapper.Map<Category>(dto);
-            await _work.CategoryRepositiry.AddAsync(category);
+            await _work.CategoryRepository.AddAsync(category);
               return Ok(new ResponseClass((int)HttpStatusCode.Created, $"Category with ID {category.Id} is created."));
         }
         [HttpPut("update/{id}")]
@@ -56,20 +56,20 @@ namespace Ecommerce.API.Controllers
             {
                 return NotFound(new ResponseClass((int)HttpStatusCode.BadRequest, "Category data is invalid."));
             }
-            var existingCategory = await _work.CategoryRepositiry.GetByIdAsync(category.Id);
+            var existingCategory = await _work.CategoryRepository.GetByIdAsync(category.Id);
             if (existingCategory == null)
             {
                 return NotFound(new ResponseClass((int)HttpStatusCode.NotFound, $"Category with ID {category.Id} not found."));
             }
             var dto = mapper.Map<Category>(category);
 
-            await _work.CategoryRepositiry.UpdateAsync(dto);
+            await _work.CategoryRepository.UpdateAsync(dto);
              return Ok(new ResponseClass((int)HttpStatusCode.NoContent, $"Category with ID {category.Id} was updated."));
         }
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
-            var category = await _work.CategoryRepositiry.GetByIdAsync(id);
+            var category = await _work.CategoryRepository.GetByIdAsync(id);
             if (category == null)
             {
                 return NotFound(new ResponseClass((int)HttpStatusCode.NotFound, $"Category with ID {id} not found."));
@@ -77,7 +77,7 @@ namespace Ecommerce.API.Controllers
             var dto = mapper.Map<Category>(category);
             dto.IsDeleted = true;
             dto.DeletedAt = DateTime.Now;
-            await _work.CategoryRepositiry.UpdateAsync(dto);
+            await _work.CategoryRepository.UpdateAsync(dto);
              return Ok(new ResponseClass((int)HttpStatusCode.NoContent, $"Category with ID {category.Id} was deleted."));
         }
     }

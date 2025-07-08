@@ -3,6 +3,7 @@ using Ecommerce.Infrastructure;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddMemoryCache();
 
 // Add services to the container
 builder.Services.AddControllers();
