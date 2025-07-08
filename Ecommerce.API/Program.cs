@@ -1,3 +1,4 @@
+using Ecommerce.API.Middleware;
 using Ecommerce.Infrastructure;
 using System.Reflection;
 
@@ -30,6 +31,8 @@ if (!Directory.Exists(wwwrootPath))
 {
     Directory.CreateDirectory(wwwrootPath);
 }
+app.UseMiddleware<ExceptionMiddleware>();
+
 app.UseStatusCodePagesWithReExecute("/errors/{0}");
 
 app.UseHttpsRedirection();
