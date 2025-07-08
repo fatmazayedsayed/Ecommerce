@@ -6,13 +6,12 @@ namespace Ecommerce.Core.Interfaces
     {
         Task<IReadOnlyList<TEntity>> GetAllAsync();
         Task<IReadOnlyList<TEntity>> GetAllAsync(params Expression<Func<TEntity, object>>[] includes);
-
         Task<TEntity> GetByIdAsync(int id);
         Task<TEntity> GetByIdAsync(int id, params Expression<Func<TEntity, object>>[] includes);
         Task AddAsync(TEntity entity);
-        Task UpdateAsync(TEntity entity); 
+        Task UpdateAsync(TEntity entity);
         Task DeleteAsync(int id);
-        Task SaveChangesAsync();
-     }
+        Task<int> CountAsync();
+    }
     
 }

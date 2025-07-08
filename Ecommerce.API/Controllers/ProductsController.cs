@@ -3,6 +3,7 @@
 using AutoMapper;
 using Ecommerce.API.Helper;
 using Ecommerce.Core.DTO.Products;
+using Ecommerce.Core.DTO.Sharing;
 using Ecommerce.Core.Entities.Product;
 using Ecommerce.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -17,20 +18,33 @@ namespace Ecommerce.API.Controllers
         public ProductsController(IUnitOfWork work, IMapper mapper) : base(work, mapper)
         {
         }
+
         [HttpGet("get-all")]
-        public async Task<IActionResult> GetAllProducts()
+        public async Task<IActionResult> get([FromQuery] ProductParams productParams)
         {
-            var Products = await _work.ProductRepository.GetAllAsync(x=>x.Category, x=>x.Photos);
-            if (Products == null || !Products.Any())
+            try
             {
-                return NotFound(new ResponseClass((int)HttpStatusCode.NotFound));
+                var product = await _work.ProductRepository.GetAllAsync(productParams);
+                if (product == null || !product.Any())
+                {
+                    return NotFound(new ResponseClass((int)HttpStatusCode.NotFound));
+                }
+                var totalCount = await _work.ProductRepository.CountAsync();
+                return Ok(new Pagination<ProductDTO>(productParams.PageNumber, productParams.PageSize, totalCount, product));
+
+                //  return BadRequest(new ResponseClass(400, "Products Not Found"));
+
             }
-            var res= mapper.Map<List<ProductDTO>>(Products);
-            return Ok(new ResponseClass((int)HttpStatusCode.Found, data: res));
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetProductById(int id)
+        [HttpGet("Get-By-Id/{id}")]
+        public async Task<IActionResult> getById(int id)
         {
             try
             {
@@ -49,8 +63,9 @@ namespace Ecommerce.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPost("create")]
-        public async Task<IActionResult> CreateProduct(AddProductDTO productDTO)
+
+        [HttpPost("Add-Product")]
+        public async Task<IActionResult> add(AddProductDTO productDTO)
         {
             try
             {
@@ -66,25 +81,29 @@ namespace Ecommerce.API.Controllers
             return Ok(new ResponseClass(200, "Product Added Successfully"));
 
         }
-        [HttpPut("update")]
-        public async Task<IActionResult> UpdateProduct(UpdateProductDTO productDto)
+
+        [HttpPut("Update-Product")]
+        public async Task<IActionResult> update(UpdateProductDTO updateProductDTO)
         {
             try
             {
-                await _work.ProductRepository.UpdateAsync(productDto);
+                await _work.ProductRepository.UpdateAsync(updateProductDTO);
                 return Ok(new ResponseClass(200, "Product Updated Successfully"));
             }
             catch (Exception ex)
             {
                 return BadRequest(new ResponseClass(400, ex.Message));
             }
+
         }
-        [HttpDelete("delete/{id}")]
-        public async Task<IActionResult> DeleteProduct(int id)
+
+
+        [HttpDelete("Delete-product/{Id}")]
+        public async Task<IActionResult> delete(int Id)
         {
             try
             {
-                var product = await _work.ProductRepository.GetByIdAsync(id, x => x.Photos, x => x.Category);
+                var product = await _work.ProductRepository.GetByIdAsync(Id, x => x.Photos, x => x.Category);
                 await _work.ProductRepository.DeleteAsync(product);
                 return Ok(new ResponseClass(200, "Product Deleted Successfully"));
 
@@ -94,5 +113,7 @@ namespace Ecommerce.API.Controllers
                 return BadRequest(new ResponseClass(400, ex.Message));
             }
         }
+
+
     }
 }
