@@ -56,7 +56,7 @@ namespace Ecommerce.API.Middleware
             });
             if (dateNow - timestamp < _rateLimtWindow)
             {
-                if (count >= 8)
+                if (count >= 8)// after 8 attempts in 30 seconds, block the request
                 {
                     return false;
                 }
